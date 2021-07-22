@@ -34,18 +34,26 @@ def BUILD_NUMBER=env.BUILD_NUMBER
     withCredentials([file(credentialsId: 'e06cb06c-72a2-44cb-a831-0c52d26c4ea9', variable: 'jwt_key_file')]) {
         println 'Inside With Credentials'
         
+        stage('Authorize the Org'){
+             // Login using JWT auth mechanism into the target instance and use credentials defined in the Global Credentials (unrestricted) 
+            rc1 = command "${toolbelt}/sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile $jwt_key_file -a targetSandbox --instanceurl https://login.salesforce.com"
+            if(rc1 != 0){
+                error 'Salesforce Authorisation is failed.'
+            }
+                
+        }
         stage('deploy code') {
             // Logout from previous authenticated connections to avoid connection errors from CLI
-            rc = command "${toolbelt}/sfdx force:auth:logout -u naga@naga.devtest -p"
-            
-            // Login using JWT auth mechanism into the target instance and use credentials defined in the Global Credentials (unrestricted) 
-            rc1 = command "${toolbelt}/sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile $jwt_key_file -a targetSandbox --instanceurl https://login.salesforce.com"
-
+           // rc = command "${toolbelt}/sfdx force:auth:logout -u naga@naga.devtest -p"
+                       
             // Deploy metadata
             rmsg = command "${toolbelt}/sfdx force:source:deploy -c -p ./force-app/main/ -u targetSandbox -l RunLocalTests"
-
+            
+            if(rmsg != 0){
+                error 'Salesforce deploy failed.'
+            }
             //Delete/Destroy Metadata
-            rmsg1 = command "${toolbelt}/sfdx force:mdapi:deploy -d destroy -u targetSandbox -w -1"
+            //rmsg1 = command "${toolbelt}/sfdx force:mdapi:deploy -d destroy -u targetSandbox -w -1"
         }
     }
   }      
