@@ -30,6 +30,7 @@ def BUILD_NUMBER=env.BUILD_NUMBER
     stage('Example Username/Password') {
         
     withCredentials([file(credentialsId: 'e06cb06c-72a2-44cb-a831-0c52d26c4ea9', variable: 'jwt_key_file')]) {
+        println 'Inside With Credentials'
         
         stage('deploy code') {
             // Logout from previous authenticated connections to avoid connection errors from CLI
