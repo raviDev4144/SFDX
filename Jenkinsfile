@@ -36,7 +36,7 @@ def BUILD_NUMBER=env.BUILD_NUMBER
             rc = sh returnStatus: true, script: "sfdx force:auth:logout -u githubuser@albertsons.com.devrm -p"
             
             // Login using JWT auth mechanism into the target instance and use credentials defined in the Global Credentials (unrestricted) 
-            rc1 = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile $JWT_KEY_CRED_ID -a targetSandbox --instanceurl https://login.salesforce.com"
+            rc1 = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile e6f5b0c2-0686-4f4b-b853-14c4af80ad10 -a targetSandbox --instanceurl https://login.salesforce.com"
 
             // Deploy metadata
             rmsg = sh returnStatus: true, script: "sfdx force:source:deploy -c -p ./force-app/main/ -u targetSandbox -l RunLocalTests"
