@@ -36,7 +36,7 @@ def BUILD_NUMBER=env.BUILD_NUMBER
         
         stage('Authorize the Org'){
              // Login using JWT auth mechanism into the target instance and use credentials defined in the Global Credentials (unrestricted) 
-            rc1 = command "${toolbelt}/sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile $jwt_key_file -a targetSandbox --instanceurl https://login.salesforce.com"
+            rc1 = command "${toolbelt}/sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} -a targetSandbox --instanceurl https://login.salesforce.com"
             if(rc1 != 0){
                 error 'Salesforce Authorisation is failed.'
             }
