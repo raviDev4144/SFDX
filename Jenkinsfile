@@ -10,7 +10,9 @@ def BUILD_NUMBER=env.BUILD_NUMBER
     def SFDC_HOST = env.SFDC_HOST_DH
     def JWT_KEY_CRED_ID = env.JWT_CRED_ID_DH
     def CONNECTED_APP_CONSUMER_KEY=env.CONNECTED_APP_CONSUMER_KEY_DH
-
+    
+    def toolbelt = tool 'toolbelt'
+    
     println 'KEY IS' 
     println JWT_KEY_CRED_ID
     println HUB_ORG
@@ -34,16 +36,16 @@ def BUILD_NUMBER=env.BUILD_NUMBER
         
         stage('deploy code') {
             // Logout from previous authenticated connections to avoid connection errors from CLI
-            rc = bat returnStatus: true, script: "sfdx force:auth:logout -u naga@naga.devtest -p"
+            rc = bat returnStatus: true, script: "${toolbelt}/sfdx force:auth:logout -u naga@naga.devtest -p"
             
             // Login using JWT auth mechanism into the target instance and use credentials defined in the Global Credentials (unrestricted) 
-            rc1 = bat returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile $jwt_key_file -a targetSandbox --instanceurl https://login.salesforce.com"
+            rc1 = bat returnStatus: true, script: "${toolbelt}/sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile $jwt_key_file -a targetSandbox --instanceurl https://login.salesforce.com"
 
             // Deploy metadata
-            rmsg = bat returnStatus: true, script: "sfdx force:source:deploy -c -p ./force-app/main/ -u targetSandbox -l RunLocalTests"
+            rmsg = bat returnStatus: true, script: "${toolbelt}/sfdx force:source:deploy -c -p ./force-app/main/ -u targetSandbox -l RunLocalTests"
 
             //Delete/Destroy Metadata
-            rmsg1 = bat returnStatus: true, script: "sfdx force:mdapi:deploy -d destroy -u targetSandbox -w -1"
+            rmsg1 = bat returnStatus: true, script: "${toolbelt}/sfdx force:mdapi:deploy -d destroy -u targetSandbox -w -1"
         }
     }
   }      
