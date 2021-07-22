@@ -29,14 +29,14 @@ def BUILD_NUMBER=env.BUILD_NUMBER
 
     stage('Example Username/Password') {
         
-    withCredentials([file(credentialsId: 'JWT_KEY_CRED_ID', variable: 'jwt_key_file')]) {
+    withCredentials([file(credentialsId: 'e06cb06c-72a2-44cb-a831-0c52d26c4ea9', variable: 'jwt_key_file')]) {
         
         stage('deploy code') {
             // Logout from previous authenticated connections to avoid connection errors from CLI
             rc = sh returnStatus: true, script: "sfdx force:auth:logout -u naga@naga.devtest -p"
             
             // Login using JWT auth mechanism into the target instance and use credentials defined in the Global Credentials (unrestricted) 
-            rc1 = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile e6f5b0c2-0686-4f4b-b853-14c4af80ad10 -a targetSandbox --instanceurl https://login.salesforce.com"
+            rc1 = sh returnStatus: true, script: "sfdx force:auth:jwt:grant --clientid $CONNECTED_APP_CONSUMER_KEY --username $HUB_ORG --jwtkeyfile $jwt_key_file -a targetSandbox --instanceurl https://login.salesforce.com"
 
             // Deploy metadata
             rmsg = sh returnStatus: true, script: "sfdx force:source:deploy -c -p ./force-app/main/ -u targetSandbox -l RunLocalTests"
